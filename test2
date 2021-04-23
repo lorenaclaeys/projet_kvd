@@ -1,0 +1,69 @@
+def kdv_rk(N):
+    data_u = []
+    analytic_data = [np.fft.fft(Kdvanalytic(x,0, 0.75, 0.33*50) + Kdvanalytic(x,0,0.4, 0.65*50))]
+    data_u.append(list(zip(x, np.fft.fft(Kdvanalytic(x,0, 0.75, 0.33*50) + Kdvanalytic(x,0, 0.4, 0.65*50)))))
+    data_t = [0,0]
+    u0 = np.fft.fft(Kdvanalytic(x,0, 0.75, 0.33*50) + Kdvanalytic(x,0,0.4, 0.65*50))
+    for n in range(nmax+1):
+        t= n*dt
+        ik3 = 1j*k**3
+        m = -0.5*1j*dt*k
+        g = np.exp(dt*ik3/2)
+        g2 = g**2
+        k1 = m * np.fft.fft(np.real(np.fft.ifft(u0))**2)
+        k2 = m * np.fft.fft(np.real(np.fft.ifft(g*(u0+k1/2)))**2)
+        k3 = m * np.fft.fft(np.real(np.fft.ifft(g*(u0+k2/2)))**2)
+        k4 = m * np.fft.fft(np.real(np.fft.ifft(g2*(u0+g *k3)))**2)
+        u0 = g2*u0 + (g2*k1 * 2*g*(k2+k3) + k4)/6
+        if np.mod(n, nplt) == 0 :
+            u = np.real(np.fft.ifft(u0))
+            data_u.append(list(zip(x,u)))
+            data_t.append(t)
+            analytic_data.append(np.fft.fft(Kdvanalytic(x,0, 0.75, 0.33*50) + Kdvanalytic(x,0,0.4, 0.65*50)))
+    return data_u, data_t, analytic_data
+
+
+N = 2**8
+tmax = 0.006
+x = ( 2*math.pi /N ) * np.arange(-N/2 ,N /2)
+dt = 0.4 /N**2
+k =np.zeros(N)
+#k[0:N/2] = np.arange(0 ,N /2)
+#k[N/2+1:] = np.arange(-N/2 + 1 ,0 , 1)
+nplt = int( np.round(( tmax / 25) / dt ))
+nmax = int( np.round ( tmax / dt ) )
+data_u, data_t, analityc_data =kdv_rk(N)
+
+
+# constants
+L = 50.               # period
+Nx = 256     # space step
+x = np.linspace(0,L,Nx)
+
+# parametres temporels
+t0 = 0
+Nt = 501 #timestep
+#t = np.linspace(t0,tmax,Nt)
+
+# parameters for the initial condition
+c1 = 0.75
+c2 = 0.4
+a1 = 0.33
+a2 = 0.65
+
+
+
+
+
+
+
+
+#graph
+plt.figure(figsize=(6,5))
+plt.imshow(data_u[::-1, :], extent=[0,L,0,tmax])
+plt.colorbar()
+plt.xlabel('x')
+plt.ylabel('t')
+plt.axis('auto')
+plt.title('Korteweg-de Vries -two solutions')
+plt.show()
