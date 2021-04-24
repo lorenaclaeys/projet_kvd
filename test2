@@ -1,4 +1,7 @@
-
+import math
+import numpy as np
+from scipy.fftpack import diff as psdiff
+import matplotlib.pyplot as plt
 from numpy.fft import fft,ifft
 
 def Kdvanalytic(x,t,c,a):
