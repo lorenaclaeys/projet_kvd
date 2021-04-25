@@ -11,7 +11,7 @@ def Kdvanalytic(x,t,c,a):
 
 def kdv_rk(Nx,u0):
     data_u = []
-    y = np.zeros(Nt+1) #500
+    y = [] #500
     analytic_data = [np.fft.fft(u0)]
     data_u.append(list(zip(x, np.fft.fft(u0))))
     data_t = [0,0]
@@ -23,7 +23,7 @@ def kdv_rk(Nx,u0):
         t = n*dt
         ik3 = 1j*k**3
         m = -0.5*1j*dt*k
-        g = np.exp(dt*ik3/2)
+        g = np.exp(dt*ik3/2) #g = (np.exp(dt*(-1j*2*np.pi*k/L)**2)) c'est le g demandé, 1j symbolise le nombre complexe ?
         g2 = g**2
         k1 = m * fft(np.real(ifft(u_hat))**2)
         k2 = m * fft(np.real(ifft(g*(u_hat+k1/2)))**2)
@@ -32,12 +32,12 @@ def kdv_rk(Nx,u0):
         u_hat = g2*u_hat + (g2*k1 * 2*g*(k2+k3) + k4)/6
         u = np.real(np.fft.ifft(u_hat))
         #print(u[1])
-        y[n] = u[n]
+        y.append(u)
         data_u.append(list(zip(x,u)))
         data_t.append(t)
         analytic_data.append(np.fft.fft(Kdvanalytic(x,t, 0.75, 0.33*50) + Kdvanalytic(x,t,0.4, 0.65*50)))
     #print(len(y))
-    return data_u, data_t, analytic_data
+    return data_u, data_t, analytic_data, y
 
 # constants
 Nx = 256     # space step
@@ -62,17 +62,16 @@ k[0:128] = np.arange(0 ,Nx /2)
 k[128+1:] = np.arange(-Nx/2 + 1 ,0 , 1)
 #nplt = int( np.round(( tmax / 25) / dt ))
 u0 = Kdvanalytic(x,0, 0.75, 0.33*50) + Kdvanalytic(x,0,0.4, 0.65*50)
-data_u, data_t, analityc_data = kdv_rk(Nx,u0)
+data_u, data_t, analityc_data, y = kdv_rk(Nx,u0)
+print(y)
 
 
-"""
 #graph
 plt.figure(figsize=(6,5))
-plt.imshow(data_u[::-1, :], extent=[0,L,0,tmax])
+plt.imshow(y, extent=[0,L,0,tmax])
 plt.colorbar()
 plt.xlabel('x')
 plt.ylabel('t')
 plt.axis('auto')
 plt.title('Korteweg-de Vries -two solutions')
 plt.show()
-"""
