@@ -23,7 +23,7 @@ def kdv_rk(Nx,u0):
         t = n*dt
         ik3 = 1j*k**3
         m = -0.5*1j*dt*k
-        g = np.exp(dt*ik3/2) #g = (np.exp(dt*(-1j*2*np.pi*k/L)**2)) c'est le g demandé, 1j symbolise le nombre complexe ?
+        g = np.exp(dt*ik3/2) #g = (np.exp(-1j*dt*((2*np.pi*k/L)**3)) c'est le g demandé, 1j symbolise le nombre complexe ?
         g2 = g**2
         k1 = m * fft(np.real(ifft(u_hat))**2)
         k2 = m * fft(np.real(ifft(g*(u_hat+k1/2)))**2)
