@@ -18,7 +18,7 @@ def kdv_rk(Nx,u0):
     for n in range(Nt+1):
         t = n*dt
         u_hat = np.fft.fft(u0)
-        g = np.exp(dt*-1j*((2*np.pi*k)/L)**3) * u_hat
+        g = np.exp(dt*1j*((2*np.pi*k)/L)**3) * u_hat
         f = np.real(np.fft.ifft(g))
         f2 = np.real(np.fft.ifft(1j*2*np.pi*(k/L)*np.fft.fft(g**2)))
         u = f - (3*f2)*dt
