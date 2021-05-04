@@ -5,40 +5,27 @@ import matplotlib.pyplot as plt
 from numpy.fft import fft,ifft
 
 def Kdvanalytic(x,t,c,a):
-    u = (c/2.)*np.cosh((math.sqrt(c)/2.)*(x - c*t - a))**(-2)
-    return u
+    return .5*c*(np.cosh(.5*math.sqrt(c)*(x - c*t - a)))**(-2)
 
 
-def kdv_rk(Nx,u0):
-    data_u = []
-    y = [] #500
-    analytic_data = [np.fft.fft(u0)]
-    data_u.append(list(zip(x, np.fft.fft(u0))))
-    data_t = [0,0]
-    for n in range(Nt+1):
-        """j'ai un u de 256 compsants et une boucle qui me donne 500 u.
-         Je veux les mettre dans un vecteur, pour avoir un vect de 500 u (u_0, u_1 , ..., u_500), avec 256 composantes chacun
-        De maniere a avoir  500 quand je fais print(len(u)) et 256 quand je fais print(len(u[i])) pour i qui va de 0 à 500) """
-        u_hat = np.fft.fft(u0)
-        t = n*dt
-        ik3 = 1j*k**3
-        m = -0.5*1j*dt*k
-        g = np.exp(dt*-1j*((2*np.pi*k)/L)**3)
-        g2 = g**2
-        k1 = m * fft(np.real(ifft(u_hat))**2)
-        k2 = m * fft(np.real(ifft(g*(u_hat+k1/2)))**2)
-        k3 = m * fft(np.real(ifft(g*(u_hat+k2/2)))**2)
-        k4 = m * fft(np.real(ifft(g2*(u_hat+g *k3)))**2)
-        u_hat = g2*u_hat + (g2*k1 * 2*g*(k2+k3) + k4)/6
-        u = np.real(np.fft.ifft(u_hat))
-        #print(u[1])
-        y.append(u)
-        data_u.append(list(zip(x,u)))
-        data_t.append(t)
-        analytic_data.append(np.fft.fft(Kdvanalytic(x,t, 0.75, 0.33*50) + Kdvanalytic(x,t,0.4, 0.65*50)))
-    #print(len(y))
-    return data_u, data_t, analytic_data, y
+def kdv_euler(Nx,Nt,u0):
+    y = np.zeros((Nx,Nt))
+    y[:,0] = u0
+    for n in range(1,Nt):
+        a = 2j*np.pi*(k/L)
+        u_hat = np.fft.fft(y[:,n-1])
+        g_hat = (np.exp(dt*a**3)* u_hat)
+        g = (np.fft.ifft(g_hat))
+        g2 = (np.fft.ifft(a*np.fft.fft(g**2)))
+        y[:,n] = np.real(g - 3*g2*dt)
+    return y
 
+
+# parameters for the initial condition
+c1 = 0.75
+c2 = 0.4
+a1 = 0.33
+a2 = 0.65
 # constants
 Nx = 256     # space step
 L = 50.      # period
@@ -46,32 +33,20 @@ x = np.linspace(0,L,Nx)
 
 # parametres temporels
 t0 = 0
-tmax = 200
-Nt = 500 #timestep
-dt = tmax/Nt#/Nx**2
-#t = np.linspace(t0,tmax,Nt)
-
-# parameters for the initial condition
-c1 = 0.75
-c2 = 0.4
-a1 = 0.33
-a2 = 0.65
+Nt = 50000 #timestep
+dt = 0.0004
 
 k =np.zeros(Nx)
-k[0:128] = np.arange(0 ,Nx /2)
-k[128+1:] = np.arange(-Nx/2 + 1 ,0 , 1)
-#nplt = int( np.round(( tmax / 25) / dt ))
-u0 = Kdvanalytic(x,0, 0.75, 0.33*50) + Kdvanalytic(x,0,0.4, 0.65*50)
-data_u, data_t, analityc_data, y = kdv_rk(Nx,u0)
-print(y)
-
-
+k[0:129] = np.arange(0 ,Nx/2+1)
+k[129:] = np.arange(-Nx/2 + 1 ,0 , 1)
+u0 = Kdvanalytic(x,0, c1, a1*L) + Kdvanalytic(x,0,c2, a2*L)
+y = kdv_euler(Nx,Nt,u0)
+plt.plot(y[:,2000])
 #graph
 plt.figure(figsize=(6,5))
-plt.imshow(y, extent=[0,L,0,tmax])
+plt.imshow(np.transpose(y), extent=[0,L,0,dt*Nt])
 plt.colorbar()
 plt.xlabel('x')
 plt.ylabel('t')
-plt.axis('auto')
 plt.title('Korteweg-de Vries -two solutions')
 plt.show()
