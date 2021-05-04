@@ -1,0 +1,40 @@
+import kdv
+import graph
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import numpy as np
+
+if __name__ == "__main__":
+
+    # parameters for the initial condition
+    c1 = 0.75
+    c2 = 0.4
+    a1 = 0.33
+    a2 = 0.65
+
+    # space parameters
+    Nx = 256     # space step
+    L = 50.      # period
+    x = np.linspace(0,L,Nx)
+
+    # time parameters
+    t0 = 0
+    Nt = 500000 #timestep
+    dt = 0.0004
+
+    #initial condition
+    u0 = kdv.Kdvanalytic(x,0, c1, a1*L) + kdv.Kdvanalytic(x,0,c2, a2*L)
+
+
+
+    ########## numerical resolution
+    y= kdv.kdv_euler(Nx,Nt,u0,L,dt)
+    #plt.plot(y[:,75000])
+    graph.graph_num(y, L, dt, Nt)
+    graph.anim_num(y, x, L)
+    plt.show()
+
+
+    ########## analytical resolution
+    y_analytic = kdv.kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt,Nx,dt)
+    graph.graph_analyt(y_analytic, L, dt, Nt)
