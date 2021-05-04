@@ -5,43 +5,26 @@ import matplotlib.pyplot as plt
 from numpy.fft import fft,ifft
 
 def Kdvanalytic(x,t,c,a):
-    u = (c/2.)*np.cosh((math.sqrt(c)/2.)*(x - c*t - a))**(-2)
-    return u
+    return .5*c*(np.cosh(.5*math.sqrt(c)*(x - c*t - a)))**(-2)
 
+# analytical solution
+def KdV(i):
+    t =i*dt
+    return Kdvanalytic(x,t,c1,a1*L) + Kdvanalytic(x,t,c2,a2*L)
 
-def kdv_rk(Nx,u0):
-    data_u = []
-    y = [] #500
-    analytic_data = [np.fft.fft(u0)]
-    data_u.append(list(zip(x, np.fft.fft(u0))))
-    data_t = [0,0]
-    for n in range(Nt+1):
-        t = n*dt
-        u_hat = np.fft.fft(u0)
-        g = np.exp(dt*1j*((2*np.pi*k)/L)**3) * u_hat
-        f = np.real(np.fft.ifft(g))
-        f2 = np.real(np.fft.ifft(1j*2*np.pi*(k/L)*np.fft.fft(g**2)))
-        u = f - (3*f2)*dt
-        #print(u[1])
-        y.append(u)
-        data_u.append(list(zip(x,u)))
-        data_t.append(t)
-        analytic_data.append(np.fft.fft(Kdvanalytic(x,t, 0.75, 0.33*50) + Kdvanalytic(x,t,0.4, 0.65*50)))
-        u0 = u
-    #print(len(y))
-    return data_u, data_t, analytic_data, y
+#numerical solution
+def kdv_euler(Nx,Nt,u0):
+    y = np.zeros((Nx,Nt))
+    y[:,0] = u0
+    for n in range(1,Nt):
+        a = 2*np.pi*(k/L)
+        u_hat = np.fft.fft(y[:,n-1])
+        g_hat = (np.exp(dt*1j*a**3)* u_hat)
+        g = (np.fft.ifft(g_hat))
+        g2 = (np.fft.ifft(1j*a*np.fft.fft(g**2)))
+        y[:,n] = np.real(g - 3*g2*dt)
+    return y
 
-# constants
-Nx = 256     # space step
-L = 50.      # period
-x = np.linspace(0,L,Nx)
-
-# parametres temporels
-t0 = 0
-tmax = 200
-Nt = 500 #timestep
-dt = tmax/Nt#/Nx**2
-#t = np.linspace(t0,tmax,Nt)
 
 # parameters for the initial condition
 c1 = 0.75
@@ -49,19 +32,33 @@ c2 = 0.4
 a1 = 0.33
 a2 = 0.65
 
+# space parameters
+Nx = 256     # space step
+L = 50.      # period
+x = np.linspace(0,L,Nx)
+
+# time parameters
+t0 = 0
+Nt = 500000 #timestep
+dt = 0.0004
+
 k =np.zeros(Nx)
-k[0:128] = np.arange(0 ,Nx /2)
-k[128+1:] = np.arange(-Nx/2 + 1 ,0 , 1)
-#nplt = int( np.round(( tmax / 25) / dt ))
-u0 = Kdvanalytic(x,0, 0.75, 0.33*50) + Kdvanalytic(x,0,0.4, 0.65*50)
-data_u, data_t, analityc_data, y = kdv_rk(Nx,u0)
+k[0:129] = np.arange(0 ,Nx/2+1)
+k[129:] = np.arange(-Nx/2 + 1 ,0 , 1)
+
+
+u0 = Kdvanalytic(x,0, c1, a1*L) + Kdvanalytic(x,0,c2, a2*L)
+y= kdv_euler(Nx,Nt,u0)
+
+
+plt.plot(y[:,75000])
 
 #graph
 plt.figure(figsize=(6,5))
-plt.imshow(y, extent=[0,L,0,tmax])
+plt.imshow(np.transpose(y[:,::-1]), extent=[0,L,0,dt*Nt]) #retourner le temps si non on a la cond initiale au dessus du graphe
 plt.colorbar()
 plt.xlabel('x')
 plt.ylabel('t')
-plt.axis('auto')
+plt.axis('tight')
 plt.title('Korteweg-de Vries -two solutions')
 plt.show()
