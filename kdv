@@ -1,11 +1,12 @@
 import math
 import numpy as np
 from scipy.fftpack import diff as psdiff
-import matplotlib.pyplot as plt
-from numpy.fft import fft,ifft
 
-def Kdvanalytic(x,t,c,a):
+def kdvanalytic(x,t,c,a):
     return .5*c*(np.cosh(.5*math.sqrt(c)*(x - c*t - a)))**(-2)
+
+def kdvanalytic2(x,t,c,a,L):
+    return .5*c*(np.cosh(.5*math.sqrt(c)*(np.mod(x-c*t,L)-a)))**(-2)
 
 
 #numerical solution
@@ -27,9 +28,9 @@ def kdv_euler(Nx,Nt,u0,L,dt):
 
 
 # analytical solution
-def kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt,Nx,dt):
+def kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt, Nx, dt):
     y = np.zeros((Nx,Nt))
-    for n in range(1,Nt):
+    for n in range(0,Nt):
         t = n*dt
-        y[:,n] = Kdvanalytic(x,t,c1,a1*L) + Kdvanalytic(x,t,c2,a2*L)
+        y[:,n] = kdvanalytic2(x,t,c1,a1*L,L) + kdvanalytic2(x,t,c2,a2*L,L)
     return y
