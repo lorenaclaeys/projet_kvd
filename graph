@@ -1,3 +1,4 @@
+
 import kdv
 import numpy as np
 from scipy import cosh, sqrt, linspace
@@ -6,29 +7,31 @@ from matplotlib.pyplot import figure,plot,xlim,ylim,grid,title,xlabel,ylabel,sho
 import matplotlib.animation as animation
 
 
-#graph numerical
-def graph_num(y, L, dt, Nt):
+#graph
+def graph(y, L, dt, Nt, type = ""):
     plt.figure(figsize=(6,5))
     plt.imshow(np.transpose(y[:,::-1]), extent=[0,L,0,dt*Nt]) #retourner le temps si non on a la cond initiale au dessus du graphe
     plt.colorbar()
     plt.xlabel('x')
     plt.ylabel('t')
     plt.axis('tight')
-    plt.title('Korteweg-de Vries -two solutions -numerical')
+    plt.title('Korteweg-de Vries : {}'.format(type))
     plt.show()
 
-#graph analytical
-def graph_analyt(y_analytic, L, dt,Nt):
-    plt.figure(figsize=(6,5))
-    plt.imshow(np.transpose(y_analytic[:,::-1]), extent=[0,L,0,dt*Nt]) #retourner le temps si non on a la cond initiale au dessus du graphe
-    plt.colorbar()
-    plt.xlabel('x')
-    plt.ylabel('t')
-    plt.axis('tight')
-    plt.title('Korteweg-de Vries -two solutions- analytical')
+
+
+def snap_shot(y, y_analytic, n):
+    plt.plot(y[:,n])
+    plt.plot(y_analytic[:,n])
+    plt.legend(["numerical", "analytic"])
+    plt.xlabel("x")
+    plt.ylabel("u(x,t)")
+    plt.title('Korteweg-de Vries')
     plt.show()
 
-def anim_num(y, x, L):
+
+"""
+def anim_num(x, u0, L, c1, c2, a1, a2, Nt, Nx, dt = 0.01):
     # parametres animation
     interval_image = 1    # intervalle entre deux images exprimÃ© en ms
     nb_images = 3000      # nombre d'iamges de l'animation
@@ -39,7 +42,10 @@ def anim_num(y, x, L):
 
     # fonction de tracé de l'animation
     def animate(i):
-        line.set_data(x,y[:,i])
+        t = i*dt
+        y= kdv.kdvanalytic(x,t,c1,a1*L) + kdv.kdvanalytic(x,t,c2,a2*L)
+        #y = kdv.kdv_euler(Nx,Nt,u0,L,dt)
+        #line.set_data(x,y[:,i])
         return line,
 
     # tracÃ© de l'Ã©volution
@@ -55,4 +61,5 @@ def anim_num(y, x, L):
 
     ani = animation.FuncAnimation(fig1,animate,init_func=init,frames=nb_images,
                                   interval= interval_image,blit=True, repeat=False)
-    return ani
+    return ani"""
+
