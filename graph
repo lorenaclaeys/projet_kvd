@@ -20,7 +20,7 @@ def graph(y, L, dt, Nt, type = ""):
 
 
 def snap_shot(y, y_analytic, t, dt):
-    n = t/dt
+    n = innt(t/dt)
     plt.plot(y_analytic[:,n])
     plt.legend(["numerical", "analytic"])
     plt.xlabel("x")
