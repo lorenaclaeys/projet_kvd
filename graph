@@ -19,9 +19,8 @@ def graph(y, L, dt, Nt, type = ""):
     plt.show()
 
 
-
-def snap_shot(y, y_analytic, n):
-    plt.plot(y[:,n])
+def snap_shot(y, y_analytic, t, dt):
+    n = t/dt
     plt.plot(y_analytic[:,n])
     plt.legend(["numerical", "analytic"])
     plt.xlabel("x")
