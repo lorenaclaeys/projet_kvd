@@ -36,4 +36,4 @@ if __name__ == "__main__":
     ########## analytical resolution
     y_analytic = kdv.kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt,Nx,dt)
     #graph.graph(y_analytic, L, dt, Nt, "analytical")
-    graph.snap_shot(y, y_analytic, 90000)
+    graph.snap_shot(y, y_analytic, 20, dt)
