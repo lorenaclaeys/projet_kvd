@@ -23,18 +23,17 @@ if __name__ == "__main__":
     dt = 0.0004
 
     #initial condition
-    u0 = kdv.Kdvanalytic(x,0, c1, a1*L) + kdv.Kdvanalytic(x,0,c2, a2*L)
+    u0 = kdv.kdvanalytic(x, 0, c1, a1*L) + kdv.kdvanalytic(x, 0, c2, a2*L)
 
 
 
     ########## numerical resolution
     y= kdv.kdv_euler(Nx,Nt,u0,L,dt)
-    #plt.plot(y[:,75000])
-    graph.graph_num(y, L, dt, Nt)
-    graph.anim_num(y, x, L)
-    plt.show()
-
+    #graph.graph(y, L, dt, Nt, "numerical")
+    #ani = graph.anim_num(x, u0, L, c1, c2, a1, a2, Nt, Nx, dt = 0.05)
+    #plt.show()
 
     ########## analytical resolution
     y_analytic = kdv.kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt,Nx,dt)
-    graph.graph_analyt(y_analytic, L, dt, Nt)
+    #graph.graph(y_analytic, L, dt, Nt, "analytical")
+    graph.snap_shot(y, y_analytic, 90000)
