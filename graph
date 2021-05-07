@@ -17,27 +17,22 @@ def graph(y, L, dt, Nt, type = ""):
 
 
 
-def snap_shot(y, y_analytic, t, dt):
-    """snapshot that shows the evolution of two solitons waves travelling at different speeds at a given time t."""
+def snap_shot(y, y_analytic, error, Nt, dt, t):
+    """snapshot that shows the evolution of two solitons waves (analytical and numerical solution) travelling at
+    different speeds and the error between the two solutions at a given time t."""
     n = int(t/dt)
+    plt.subplot(2,1,1)
     plt.plot(y[:,n])
     plt.plot(y_analytic[:,n])
+    plt.ylabel("u(x,t)")
     plt.legend(["numerical", "analytic"])
+    plt.title('Korteweg-de Vriest t = {}'.format(t))
+    
+    plt.subplot(212)
+    plt.plot(error[:,n])
+    plt.legend(["error"])
     plt.xlabel("x = x2/dx, x2 goes from 0 to 50 in 256 steps")
     plt.ylabel("u(x,t)")
-    plt.title('Korteweg-de Vriest = {}'.format(t))
-    plt.show()
-
-
-
-def graph_error(error, Nt, dt, t):
-    """graph that shows the evolution of the error between analytical value (the real  one)and numerical value
-    (the approximation) for two solitons waves travelling at different speeds at a given time t."""
-    n = int(t/dt)
-    plt.plot(error[:,n])
-    plt.xlabel("x = x2/dx, x2 goes from 0 to 50 in 256 steps")
-    plt.ylabel("global error")
-    plt.title('Korteweg-de Vries global error, t = {}'.format(t))
     plt.show()
 
 
