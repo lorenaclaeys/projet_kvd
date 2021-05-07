@@ -34,3 +34,13 @@ def kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt, Nx, dt):
         t = n*dt
         y[:,n] = kdvanalytic2(x,t,c1,a1*L,L) + kdvanalytic2(x,t,c2,a2*L,L)
     return y
+    
+#error
+def error(y, y_analytic, Nx, Nt, dt):
+    """function that returns the root square mean error (rsme) between the analytical value
+    (the real one) and the numerical value (the approximation)"""
+    t_max = Nt*dt
+    rmse = np.zeros((Nx,Nt))
+    for n in range(0,Nt):
+        rmse[:,n] =  np.sqrt((y[:,n]-y_analytic[:,n])**2/t_max)
+    return rmse
