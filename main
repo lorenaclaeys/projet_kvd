@@ -28,15 +28,14 @@ if __name__ == "__main__":
 
     ########## numerical solution
     y= kdv.kdv_euler(Nx,Nt,u0,L,dt)
-    graph.graph(y, L, dt, Nt, "numerical")
+    #graph.graph(y, L, dt, Nt, "numerical")
 
 
     ########## analytical solution
     y_analytic = kdv.kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt,Nx,dt)
-    graph.graph(y_analytic, L, dt, Nt, "analytical")
+    #graph.graph(y_analytic, L, dt, Nt, "analytical")
 
     ########## analytical vs numerical
-    graph.snap_shot(y, y_analytic, 0, dt)
     error = kdv.error(y, y_analytic, Nx, Nt, dt)
-    graph.graph_error(error, Nt, dt, 20)
-    graph.graph_error_t(error, L, dt, Nt)
+    graph.snap_shot(y, y_analytic, error, Nt, dt, t=70)
+    #graph.graph_error_t(error, L, dt, Nt)
