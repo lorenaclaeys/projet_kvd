@@ -1,7 +1,6 @@
 
 import kdv
 import numpy as np
-from scipy import cosh, sqrt, linspace
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure,plot,xlim,ylim,grid,title,xlabel,ylabel,show
 import matplotlib.animation as animation
@@ -28,6 +27,23 @@ def snap_shot(y, y_analytic, t, dt):
     plt.title('Korteweg-de Vries')
     plt.show()
 
+def graph_error(error, Nt, dt, t):
+    n = int(t/dt)
+    plt.plot(error[:,n])
+    plt.xlabel("t")
+    plt.ylabel("global error")
+    plt.title('Global error')
+    plt.show()
+
+def graph_error_t(error, L, dt, Nt):
+    plt.figure(figsize=(6,5))
+    plt.imshow(np.transpose(error[:,::-1]), extent=[0,L,0,dt*Nt]) #retourner le temps si non on a la cond initiale au dessus du graphe
+    plt.colorbar()
+    plt.xlabel('x')
+    plt.ylabel('t')
+    plt.axis('tight')
+    plt.title('Korteweg-de Vries global error')
+    plt.show()
 
 """
 def anim_num(x, u0, L, c1, c2, a1, a2, Nt, Nx, dt = 0.01):
