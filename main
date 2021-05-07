@@ -23,19 +23,33 @@ if __name__ == "__main__":
 
     #initial condition
     u0 = kdv.kdvanalytic(x, 0, c1, a1*L) + kdv.kdvanalytic(x, 0, c2, a2*L)
+    u0_1wave = kdv.kdvanalytic(x, 0, c1, a1*L)
 
 
 
     ########## numerical solution
+    ### two solitons
     y= kdv.kdv_euler(Nx,Nt,u0,L,dt)
-    #graph.graph(y, L, dt, Nt, "numerical")
-
+    graph.graph(y, L, dt, Nt, "numerical")
+    ### one soliton
+    y_1wave = kdv.kdv_euler(Nx,Nt,u0_1wave,L,dt)
+    graph.graph(y_1wave, L, dt, Nt, "numerical-one wave")
 
     ########## analytical solution
+    ### two solitons
     y_analytic = kdv.kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt,Nx,dt)
-    #graph.graph(y_analytic, L, dt, Nt, "analytical")
+    graph.graph(y_analytic, L, dt, Nt, "analytical")
+    ### one soliton
+    y_analytic_1wave = kdv.kdv_analyt_1wave(x, c1, a1, L, Nt, Nx, dt)
+    graph.graph(y_analytic_1wave, L, dt, Nt, "analytical- one wave")
+
 
     ########## analytical vs numerical
+    ### two solitons
     error = kdv.error(y, y_analytic, Nx, Nt, dt)
     graph.snap_shot(y, y_analytic, error, Nt, dt, t=70)
-    #graph.graph_error_t(error, L, dt, Nt)
+    graph.graph_error_t(error, L, dt, Nt)
+    ### one soliton
+    error_1wave = kdv.error(y_1wave, y_analytic_1wave, Nx, Nt, dt)
+    graph.snap_shot(y_1wave, y_analytic_1wave, error_1wave, Nt, dt, t=)
+    graph.graph_error_t(error_1wave, L, dt, Nt)
