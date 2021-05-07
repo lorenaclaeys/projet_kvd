@@ -1,13 +1,11 @@
-
 import kdv
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import figure,plot,xlim,ylim,grid,title,xlabel,ylabel,show
-import matplotlib.animation as animation
 
 
 #graph
 def graph(y, L, dt, Nt, type = ""):
+    """graph that shows the evolution of two solitons waves travelling at different speeds in a periodic domain."""
     plt.figure(figsize=(6,5))
     plt.imshow(np.transpose(y[:,::-1]), extent=[0,L,0,dt*Nt]) #retourner le temps si non on a la cond initiale au dessus du graphe
     plt.colorbar()
@@ -18,24 +16,35 @@ def graph(y, L, dt, Nt, type = ""):
     plt.show()
 
 
+
 def snap_shot(y, y_analytic, t, dt):
-    n = innt(t/dt)
+    """snapshot that shows the evolution of two solitons waves travelling at different speeds at a given time t."""
+    n = int(t/dt)
+    plt.plot(y[:,n])
     plt.plot(y_analytic[:,n])
     plt.legend(["numerical", "analytic"])
-    plt.xlabel("x")
+    plt.xlabel("x = x2/dx, x2 goes from 0 to 50 in 256 steps")
     plt.ylabel("u(x,t)")
-    plt.title('Korteweg-de Vries')
+    plt.title('Korteweg-de Vriest = {}'.format(t))
     plt.show()
+
+
 
 def graph_error(error, Nt, dt, t):
+    """graph that shows the evolution of the error between analytical value (the real  one)and numerical value
+    (the approximation) for two solitons waves travelling at different speeds at a given time t."""
     n = int(t/dt)
     plt.plot(error[:,n])
-    plt.xlabel("t")
+    plt.xlabel("x = x2/dx, x2 goes from 0 to 50 in 256 steps")
     plt.ylabel("global error")
-    plt.title('Global error')
+    plt.title('Korteweg-de Vries global error, t = {}'.format(t))
     plt.show()
 
+
+
 def graph_error_t(error, L, dt, Nt):
+    """graph that shows the evolution of the error between analytical value (the real one) and numerical value
+    (the approximation) for two solitons waves travelling at different speeds in a periodic domain."""
     plt.figure(figsize=(6,5))
     plt.imshow(np.transpose(error[:,::-1]), extent=[0,L,0,dt*Nt]) #retourner le temps si non on a la cond initiale au dessus du graphe
     plt.colorbar()
@@ -44,37 +53,4 @@ def graph_error_t(error, L, dt, Nt):
     plt.axis('tight')
     plt.title('Korteweg-de Vries global error')
     plt.show()
-
-"""
-def anim_num(x, u0, L, c1, c2, a1, a2, Nt, Nx, dt = 0.01):
-    # parametres animation
-    interval_image = 1    # intervalle entre deux images exprimÃ© en ms
-    nb_images = 3000      # nombre d'iamges de l'animation
-
-    def init():
-        line.set_data([],[])
-        return line,
-
-    # fonction de tracé de l'animation
-    def animate(i):
-        t = i*dt
-        y= kdv.kdvanalytic(x,t,c1,a1*L) + kdv.kdvanalytic(x,t,c2,a2*L)
-        #y = kdv.kdv_euler(Nx,Nt,u0,L,dt)
-        #line.set_data(x,y[:,i])
-        return line,
-
-    # tracÃ© de l'Ã©volution
-    fig1 = figure(figsize=(8,6))
-    line, = plot([],[])
-
-    xlim(0,L)
-    ylim(0.0,1.5)
-    grid(True)
-    title("Korteweg de Vries")
-    xlabel("X")
-    ylabel("U(x,t)")
-
-    ani = animation.FuncAnimation(fig1,animate,init_func=init,frames=nb_images,
-                                  interval= interval_image,blit=True, repeat=False)
-    return ani"""
 
