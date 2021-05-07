@@ -27,13 +27,19 @@ if __name__ == "__main__":
 
 
 
-    ########## numerical resolution
+    ########## numerical solution
     y= kdv.kdv_euler(Nx,Nt,u0,L,dt)
-    #graph.graph(y, L, dt, Nt, "numerical")
+    graph.graph(y, L, dt, Nt, "numerical")
     #ani = graph.anim_num(x, u0, L, c1, c2, a1, a2, Nt, Nx, dt = 0.05)
     #plt.show()
 
-    ########## analytical resolution
+    ########## analytical solution
     y_analytic = kdv.kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt,Nx,dt)
-    #graph.graph(y_analytic, L, dt, Nt, "analytical")
-    graph.snap_shot(y, y_analytic, 20, dt)
+    graph.graph(y_analytic, L, dt, Nt, "analytical")
+    
+
+    ########## analytical vs numerical
+    graph.snap_shot(y, y_analytic, 45, dt)
+    error = kdv.error(y, y_analytic, Nx, Nt, dt)
+    graph.graph_error(error, Nt, dt, 50)
+    graph.graph_error_t(error, L, dt, Nt)
