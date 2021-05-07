@@ -42,14 +42,22 @@ def kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt, Nx, dt):
         y[:,n] = kdvanalytic_periodic(x,t,c1,a1*L,L) + kdvanalytic_periodic(x,t,c2,a2*L,L)
     return y
 
+def kdv_analyt_1wave(x, c1, a1, L, Nt, Nx, dt):
+    """function that gives the analytical solution of the kdv equation for a sigle soliton wave.
+    It returns a matrix y where the rows are from size Nx =256 and represent the space, and the columns are
+    from size Nt = 500000 and represent the time. y = [[u_0],...,[u_n]]"""
+    y = np.zeros((Nx,Nt))
+    for n in range(0,Nt):
+        t = n*dt
+        y[:,n] = kdvanalytic_periodic(x,t,c1,a1*L,L)
+    return y
+
 
 #error
 def error(y, y_analytic, Nx, Nt, dt):
     """function that returns the root mean square error (rmse) between the analytical value
     (the real one) and the numerical value (the approximation)"""
-    t_max = Nt*dt
     rmse = np.zeros((Nx,Nt))
     for n in range(0,Nt):
-        rmse[:,n] =  np.sqrt((y[:,n]-y_analytic[:,n])**2/t_max)
+        rmse[:,n] =  np.sqrt((y[:,n]-y_analytic[:,n])**2/Nt)
     return rmse
-
