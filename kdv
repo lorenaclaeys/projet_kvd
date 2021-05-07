@@ -1,16 +1,20 @@
 import math
 import numpy as np
-from scipy.fftpack import diff as psdiff
 
 def kdvanalytic(x,t,c,a):
+    """function that returns the analytical solution for a single soliton wave."""
     return .5*c*(np.cosh(.5*math.sqrt(c)*(x - c*t - a)))**(-2)
 
-def kdvanalytic2(x,t,c,a,L):
+def kdvanalytic_periodic(x,t,c,a,L):
+    "function that returns the periodic analytical solution for a single soliton wave."""
     return .5*c*(np.cosh(.5*math.sqrt(c)*(np.mod(x-c*t,L)-a)))**(-2)
 
 
 #numerical solution
 def kdv_euler(Nx,Nt,u0,L,dt):
+    """function that approximate the kdv equation for a collision between 2 solitons waves,thanks to spectral method.
+    It returns a matrix y where the rows are from size Nx =256 and represent the space, and the columns are from size
+    Nt = 500000 and represent the time. y = [[u_0],...,[u_n]]."""
     y = np.zeros((Nx,Nt))
     y[:,0] = u0
     k =np.zeros(Nx)
@@ -29,18 +33,23 @@ def kdv_euler(Nx,Nt,u0,L,dt):
 
 # analytical solution
 def kdv_analyt_collison(x, c1, c2, a1, a2, L, Nt, Nx, dt):
+    """function that gives the analytical solution of the kdv equation for a collision between 2 solitons waves.
+    It returns a matrix y where the rows are from size Nx =256 and represent the space, and the columns are
+    from size Nt = 500000 and represent the time. y = [[u_0],...,[u_n]]"""
     y = np.zeros((Nx,Nt))
     for n in range(0,Nt):
         t = n*dt
-        y[:,n] = kdvanalytic2(x,t,c1,a1*L,L) + kdvanalytic2(x,t,c2,a2*L,L)
+        y[:,n] = kdvanalytic_periodic(x,t,c1,a1*L,L) + kdvanalytic_periodic(x,t,c2,a2*L,L)
     return y
-    
+
+
 #error
 def error(y, y_analytic, Nx, Nt, dt):
-    """function that returns the root square mean error (rsme) between the analytical value
+    """function that returns the root mean square error (rmse) between the analytical value
     (the real one) and the numerical value (the approximation)"""
     t_max = Nt*dt
     rmse = np.zeros((Nx,Nt))
     for n in range(0,Nt):
         rmse[:,n] =  np.sqrt((y[:,n]-y_analytic[:,n])**2/t_max)
     return rmse
+
